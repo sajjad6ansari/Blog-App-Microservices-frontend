@@ -47,7 +47,7 @@ const RegisterPage = () => {
         }
     }, [isAuth]);
 
-    const handleRegister = async (e) => {
+    const handleRegister = async (e:any) => {
         e.preventDefault();
         setLoading(true);
 
@@ -71,7 +71,17 @@ const RegisterPage = () => {
 
         } catch (error) {
             console.log("Registration Error:", error);
-            const errorMessage = error.response?.data?.message || "Registration failed. Please try again.";
+            let errorMessage = "Registration failed. Please try again.";
+
+            // Check if the error is an Axios error
+            if (axios.isAxiosError(error) && error.response) {
+                // Now TypeScript knows error.response exists and has a 'data' property
+                errorMessage = error.response.data.message || errorMessage;
+            } else if (error instanceof Error) {
+                // Handle generic errors
+                errorMessage = error.message;
+            }
+
             toast.error(errorMessage);
             setLoading(false);
         }
