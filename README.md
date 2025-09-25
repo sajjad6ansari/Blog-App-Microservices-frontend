@@ -12,7 +12,324 @@ A modern, responsive blog application frontend built with Next.js 15, React 19, 
 - **JWT Authorization**: Secure JWT-based authorization system
 - **Microservices Integration**: Fully integrated with backend microservices architecture
 
-## 🛠️ Tech Stack
+## 🏗️ Architecture Overview
+
+### High-Level System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                    FRONTEND                                     │
+│                              Next.js 15 + React 19                             │
+│                                TypeScript + Tailwind CSS                        │
+└─────────────────────────────┬───────────────────────────────────────────────────┘
+                              │
+                              │ HTTP/HTTPS Requests
+                              │ JWT Authentication
+                              │
+    ┌─────────────────────────┼─────────────────────────┐
+    │                         │                         │
+    │                         │                         │
+    ▼                         ▼                         ▼
+┌─────────┐               ┌─────────┐               ┌─────────┐
+│  USER   │               │ AUTHOR  │               │  BLOG   │
+│ SERVICE │               │ SERVICE │               │ SERVICE │
+│         │               │         │               │         │
+│ Port:   │               │ Port:   │               │ Port:   │
+│  5000   │               │  5001   │               │  5002   │
+└─────────┘               └─────────┘               └─────────┘
+    │                         │                         │
+    ▼                         ▼                         ▼
+┌─────────┐               ┌─────────┐               ┌─────────┐
+│ MongoDB │               │PostgreSQL│               │PostgreSQL│
+│         │               │ (NeonDB) │               │ (NeonDB) │
+│ Users   │               │ Blogs    │               │ Blogs    │
+│ Profiles│               │Comments  │               │Comments  │
+│         │               │SavedBlogs│               │SavedBlogs│
+└─────────┘               └─────────┘               └─────────┘
+                              │                         │
+                              ▼                         ▼
+                        ┌─────────────────────────────────┐
+                        │           RabbitMQ              │
+                        │     Message Queue System        │
+                        │    Cache Invalidation           │
+                        └─────────────────────────────────┘
+                                        │
+                                        ▼
+                                ┌─────────────┐
+                                │    Redis    │
+                                │    Cache    │
+                                │  (Blog Svc) │
+                                └─────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                            EXTERNAL SERVICES                                    │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│  Google OAuth 2.0  │  Cloudinary CDN  │  Docker Hub Registry                   │
+│  Authentication    │  Image Storage   │  Container Images                       │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Service Communication Flow
+
+```
+Frontend Application
+        │
+        ├── Authentication Flow
+        │   │
+        │   ├── Google OAuth ──► User Service (5000) ──► MongoDB
+        │   └── Email/Password ──► User Service (5000) ──► MongoDB
+        │
+        ├── Content Creation Flow
+        │   │
+        │   ├── Create/Edit Blog ──► Author Service (5001) ──► PostgreSQL
+        │   │                              │
+        │   │                              ▼
+        │   │                         RabbitMQ (Cache Invalidation)
+        │   │                              │
+        │   │                              ▼
+        │   └── Image Upload ──► Cloudinary CDN
+        │
+        └── Content Consumption Flow
+            │
+            ├── Browse Blogs ──► Blog Service (5002) ──► Redis Cache
+            │                           │                    │
+            │                           └──► PostgreSQL ◄────┘
+            │
+            ├── Search/Filter ──► Blog Service (5002) ──► Redis Cache
+            │
+            ├── Comments ──► Blog Service (5002) ──► PostgreSQL
+            │
+            └── Save Blogs ──► Blog Service (5002) ──► PostgreSQL
+```
+
+## 🔄 Data Flow Patterns
+
+### 1. User Authentication Flow
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Frontend  │    │User Service │    │   Google    │    │   MongoDB   │
+│             │    │   (5000)    │    │   OAuth     │    │             │
+└──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
+       │                  │                  │                  │
+       │ 1. Login Request │                  │                  │
+       ├─────────────────►│                  │                  │
+       │                  │ 2. OAuth Request │                  │
+       │                  ├─────────────────►│                  │
+       │                  │ 3. User Data     │                  │
+       │                  │◄─────────────────┤                  │
+       │                  │ 4. Store/Fetch User               │
+       │                  ├─────────────────────────────────────►│
+       │                  │ 5. User Data     │                  │
+       │                  │◄─────────────────────────────────────┤
+       │ 6. JWT Token     │                  │                  │
+       │◄─────────────────┤                  │                  │
+```
+
+### 2. Blog Creation Flow
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Frontend  │    │Author Service│    │  Cloudinary │    │ PostgreSQL  │
+│             │    │   (5001)    │    │             │    │   (NeonDB)  │
+└──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
+       │                  │                  │                  │
+       │ 1. Create Blog   │                  │                  │
+       ├─────────────────►│                  │                  │
+       │                  │ 2. Upload Image  │                  │
+       │                  ├─────────────────►│                  │
+       │                  │ 3. Image URL     │                  │
+       │                  │◄─────────────────┤                  │
+       │                  │ 4. Store Blog Data                 │
+       │                  ├─────────────────────────────────────►│
+       │                  │ 5. Blog Created  │                  │
+       │                  │◄─────────────────────────────────────┤
+       │ 6. Success       │                  │                  │
+       │◄─────────────────┤                  │                  │
+       │                  │                  │                  │
+       │                  │ 7. Cache Invalidation ──► RabbitMQ ──► Blog Service
+```
+
+### 3. Blog Consumption Flow
+```
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   Frontend  │    │Blog Service │    │    Redis    │    │ PostgreSQL  │
+│             │    │   (5002)    │    │    Cache    │    │   (NeonDB)  │
+└──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
+       │                  │                  │                  │
+       │ 1. Get Blogs     │                  │                  │
+       ├─────────────────►│                  │                  │
+       │                  │ 2. Check Cache   │                  │
+       │                  ├─────────────────►│                  │
+       │                  │ 3. Cache Miss    │                  │
+       │                  │◄─────────────────┤                  │
+       │                  │ 4. Query Database                   │
+       │                  ├─────────────────────────────────────►│
+       │                  │ 5. Blog Data     │                  │
+       │                  │◄─────────────────────────────────────┤
+       │                  │ 6. Cache Data    │                  │
+       │                  ├─────────────────►│                  │
+       │ 7. Blog List     │                  │                  │
+       │◄─────────────────┤                  │                  │
+```
+
+## � Application Flow & User Journeys
+
+### 1. Guest User Journey
+```
+Landing Page (/) 
+    │
+    ├── Browse Blogs
+    │   ├── View Blog List ──► Blog Service API
+    │   ├── Search Blogs ──► Blog Service API (cached)
+    │   ├── Filter by Category ──► Blog Service API (cached)
+    │   └── Read Blog ──► Blog Service API (with author info)
+    │
+    └── Authentication
+        ├── Sign Up ──► User Service API
+        └── Login ──► User Service API (OAuth/Password)
+```
+
+### 2. Authenticated User Journey
+```
+Authenticated User
+    │
+    ├── Profile Management
+    │   ├── View Profile (/profile) ──► User Service API
+    │   ├── Edit Profile ──► User Service API
+    │   └── Upload Profile Picture ──► User Service API ──► Cloudinary
+    │
+    ├── Blog Interaction
+    │   ├── Save/Unsave Blogs ──► Blog Service API
+    │   ├── View Saved Blogs (/blog/saved) ──► Blog Service API
+    │   └── Comment on Blogs ──► Blog Service API
+    │
+    └── Content Creation (Author Role)
+        ├── Create Blog ──► Author Service API
+        ├── Edit Blog ──► Author Service API
+        ├── Delete Blog ──► Author Service API
+        └── Upload Blog Images ──► Author Service API ──► Cloudinary
+```
+
+### 3. Real-time Data Synchronization
+```
+Author Creates/Updates Blog
+    │
+    ▼
+Author Service
+    │
+    ├── Save to PostgreSQL
+    │
+    └── Publish to RabbitMQ
+            │
+            ▼
+        Blog Service
+            │
+            ├── Receive Message
+            ├── Invalidate Redis Cache
+            └── Rebuild Cache
+                    │
+                    ▼
+                Frontend
+                    │
+                    └── Fresh Data on Next Request
+```
+
+### 4. Component Architecture Flow
+```
+App Layout (/layout.tsx)
+    │
+    ├── Navbar Component
+    │   ├── Navigation Links
+    │   ├── Authentication Status
+    │   └── User Profile Dropdown
+    │
+    └── Page Components
+        │
+        ├── Home Page (/)
+        │   └── Blog Listings
+        │
+        ├── Login Page (/login)
+        │   ├── Google OAuth Button
+        │   └── Email/Password Form
+        │
+        ├── Blog Pages (/blog/[id])
+        │   ├── Blog Content
+        │   ├── Author Information
+        │   └── Comments Section
+        │
+        └── Saved Blogs (/blog/saved)
+            └── User's Bookmarked Blogs
+```
+
+## 🔧 Technical Implementation Details
+
+### API Integration Patterns
+```typescript
+// Authentication Header Pattern
+const apiCall = async (endpoint: string, options: RequestInit = {}) => {
+  const token = localStorage.getItem('jwt_token');
+  
+  return fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
+// Service Endpoints
+const SERVICES = {
+  USER: 'http://localhost:5000/api/v1',
+  AUTHOR: 'http://localhost:5001/api/v1', 
+  BLOG: 'http://localhost:5002/api/v1'
+};
+```
+
+### State Management Flow
+```
+User Action (UI Event)
+    │
+    ▼
+React Component State Update
+    │
+    ▼
+API Call to Microservice
+    │
+    ▼
+Backend Processing
+    │
+    ▼
+Response with Updated Data
+    │
+    ▼
+Component Re-render
+    │
+    ▼
+UI Update
+```
+
+### Caching Strategy
+```
+Frontend Request
+    │
+    ▼
+Blog Service
+    │
+    ├── Check Redis Cache
+    │   ├── Cache Hit ──► Return Cached Data
+    │   └── Cache Miss ──► Query PostgreSQL
+    │                         │
+    │                         ▼
+    │                    Store in Redis
+    │                         │
+    │                         ▼
+    │                    Return Fresh Data
+    │
+    └── Author Service Changes ──► RabbitMQ ──► Cache Invalidation
+```
+
+## �🛠️ Tech Stack
 
 ### Frontend Framework
 - **Framework**: [Next.js 15](https://nextjs.org/) with App Router
