@@ -4,265 +4,663 @@ A modern, responsive blog application frontend built with Next.js 15, React 19, 
 
 ## 🚀 Features
 
-- **Modern UI/UX**: Built with shadcn/ui components and Tailwind CSS for a clean, responsive design
-- **Responsive Navigation**: Mobile-friendly navigation with hamburger menu
-- **Type Safety**: Full TypeScript support for enhanced development experience
-- **Component Library**: Reusable UI components with consistent styling
-- **Multi-Authentication**: Supports both Google OAuth and password-based authentication
-- **JWT Authorization**: Secure JWT-based authorization system
-- **Microservices Integration**: Fully integrated with backend microservices architecture
+<div align="center">
+
+### ✨ Key Capabilities
+
+</div>
+
+### 🎨 **Modern UI/UX**
+- **shadcn/ui** components for consistent design language
+- **Tailwind CSS** utility-first design system
+- **Responsive** layouts that adapt to any screen size
+- **Clean** & **professional** user interface design
+- **Accessibility-first** component architecture
+
+### 📱 **Responsive Design**
+- **Mobile-first** approach for optimal performance
+- **Hamburger menu** navigation for mobile devices
+- **Adaptive** layouts that scale beautifully
+- **Cross-device** compatibility across all platforms
+- **Touch-friendly** interface elements
+
+### 🔐 **Multi-Authentication**
+- **Google OAuth 2.0** social login integration
+- **Email/Password** traditional authentication
+- **JWT** secure token-based authorization
+- **Token** automatic refresh mechanism
+- **Session** management with secure storage
+
+### ⚡ **Developer Experience**
+- **Full TypeScript** support for type safety
+- **Component library** system with shadcn/ui
+- **Microservices** seamless backend integration
+- **Modern tooling** & **best practices**
+- **Hot reload** development environment
+
+<div align="center">
+
+### 🏗️ **Architecture Highlights**
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+
+</div>
 
 ## 🏗️ Architecture Overview
 
-### High-Level System Architecture
+<div align="center">
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                    FRONTEND                                     │
-│                              Next.js 15 + React 19                             │
-│                                TypeScript + Tailwind CSS                        │
-└─────────────────────────────┬───────────────────────────────────────────────────┘
-                              │
-                              │ HTTP/HTTPS Requests
-                              │ JWT Authentication
-                              │
-    ┌─────────────────────────┼─────────────────────────┐
-    │                         │                         │
-    │                         │                         │
-    ▼                         ▼                         ▼
-┌─────────┐               ┌─────────┐               ┌─────────┐
-│  USER   │               │ AUTHOR  │               │  BLOG   │
-│ SERVICE │               │ SERVICE │               │ SERVICE │
-│         │               │         │               │         │
-│ Port:   │               │ Port:   │               │ Port:   │
-│  5000   │               │  5001   │               │  5002   │
-└─────────┘               └─────────┘               └─────────┘
-    │                         │                         │
-    ▼                         ▼                         ▼
-┌─────────┐               ┌─────────┐               ┌─────────┐
-│ MongoDB │               │PostgreSQL│               │PostgreSQL│
-│         │               │ (NeonDB) │               │ (NeonDB) │
-│ Users   │               │ Blogs    │               │ Blogs    │
-│ Profiles│               │Comments  │               │Comments  │
-│         │               │SavedBlogs│               │SavedBlogs│
-└─────────┘               └─────────┘               └─────────┘
-                              │                         │
-                              ▼                         ▼
-                        ┌─────────────────────────────────┐
-                        │           RabbitMQ              │
-                        │     Message Queue System        │
-                        │    Cache Invalidation           │
-                        └─────────────────────────────────┘
-                                        │
-                                        ▼
-                                ┌─────────────┐
-                                │    Redis    │
-                                │    Cache    │
-                                │  (Blog Svc) │
-                                └─────────────┘
+### 🌟 High-Level System Architecture
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                            EXTERNAL SERVICES                                    │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  Google OAuth 2.0  │  Cloudinary CDN  │  Docker Hub Registry                   │
-│  Authentication    │  Image Storage   │  Container Images                       │
-└─────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "🌐 Frontend Layer"
+        FE[🎨 Next.js 15 Frontend<br/>React 19 + TypeScript<br/>Tailwind CSS + shadcn/ui]
+    end
+    
+    subgraph "🔗 API Gateway Layer"
+        HTTP[🔒 HTTPS/JWT Auth<br/>RESTful APIs<br/>JSON Payloads]
+    end
+    
+    subgraph "⚡ Microservices Layer"
+        US[🔐 User Service<br/>Port: 5000<br/>Auth & Profiles]
+        AS[✍️ Author Service<br/>Port: 5001<br/>Content Creation]
+        BS[📝 Blog Service<br/>Port: 5002<br/>Content Management]
+    end
+    
+    subgraph "💾 Database Layer"
+        MONGO[(🍃 MongoDB<br/>Users & Profiles<br/>Authentication Data)]
+        POSTGRES1[(🐘 PostgreSQL<br/>NeonDB<br/>Blog Content)]
+        POSTGRES2[(🐘 PostgreSQL<br/>NeonDB<br/>Comments & Saves)]
+    end
+    
+    subgraph "🚀 Caching & Messaging"
+        REDIS[(⚡ Redis Cache<br/>Blog Data<br/>Performance)]
+        RABBIT[🐰 RabbitMQ<br/>Message Queue<br/>Cache Invalidation]
+    end
+    
+    subgraph "☁️ External Services"
+        GOOGLE[🔍 Google OAuth<br/>Authentication]
+        CLOUD[☁️ Cloudinary<br/>Image CDN]
+        DOCKER[🐳 Docker Hub<br/>Container Registry]
+    end
+    
+    %% Frontend connections
+    FE --> HTTP
+    HTTP --> US
+    HTTP --> AS  
+    HTTP --> BS
+    
+    %% Service to database connections
+    US --> MONGO
+    AS --> POSTGRES1
+    BS --> POSTGRES2
+    BS --> REDIS
+    
+    %% Inter-service communication
+    AS --> RABBIT
+    RABBIT --> BS
+    BS --> REDIS
+    
+    %% External service connections
+    US --> GOOGLE
+    AS --> CLOUD
+    FE -.-> DOCKER
+    
+    %% Styling with high contrast text
+    classDef frontend fill:#b3e5fc,stroke:#0277bd,stroke-width:3px,color:#000
+    classDef microservice fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000
+    classDef database fill:#b2dfdb,stroke:#00695c,stroke-width:2px,color:#000
+    classDef cache fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
+    classDef external fill:#d1c4e9,stroke:#4527a0,stroke-width:2px,color:#000
+    classDef api fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+    
+    class FE frontend
+    class US,AS,BS microservice
+    class MONGO,POSTGRES1,POSTGRES2 database
+    class REDIS,RABBIT cache
+    class GOOGLE,CLOUD,DOCKER external
+    class HTTP api
 ```
 
-### Service Communication Flow
+</div>
 
+### 🔄 Service Communication Flow
+
+<div align="center">
+
+```mermaid
+graph TD
+    subgraph "🌐 Frontend Application"
+        USER[👤 User Interaction]
+    end
+    
+    subgraph "🔐 Authentication Flows"
+        OAUTH[🌐 Google OAuth]
+        PASS[🔑 Email/Password]
+    end
+    
+    subgraph "✍️ Content Creation Flows"
+        CREATE[📝 Create/Edit Blog]
+        IMAGE[🖼️ Image Upload]
+        AI[🤖 AI Content Generation]
+    end
+    
+    subgraph "📚 Content Consumption Flows"
+        BROWSE[🔍 Browse Blogs]
+        SEARCH[🔎 Search/Filter]
+        COMMENT[💬 Comments]
+        SAVE[💾 Save Blogs]
+    end
+    
+    subgraph "⚡ Backend Services"
+        US[🔐 User Service<br/>:5000]
+        AS[✍️ Author Service<br/>:5001]
+        BS[📝 Blog Service<br/>:5002]
+    end
+    
+    subgraph "💾 Data Storage"
+        MONGO[(🍃 MongoDB)]
+        POSTGRES[(🐘 PostgreSQL)]
+        REDIS[(⚡ Redis Cache)]
+    end
+    
+    subgraph "🚀 Infrastructure"
+        RABBIT[🐰 RabbitMQ]
+        CLOUD[☁️ Cloudinary]
+        GOOGLE[🔍 Google API]
+    end
+    
+    %% User interactions
+    USER --> OAUTH
+    USER --> PASS
+    USER --> CREATE
+    USER --> IMAGE
+    USER --> BROWSE
+    USER --> SEARCH
+    USER --> COMMENT
+    USER --> SAVE
+    
+    %% Authentication flows
+    OAUTH --> US
+    PASS --> US
+    US --> MONGO
+    US --> GOOGLE
+    
+    %% Content creation flows
+    CREATE --> AS
+    IMAGE --> AS
+    AI --> AS
+    AS --> POSTGRES
+    AS --> CLOUD
+    AS --> RABBIT
+    
+    %% Content consumption flows
+    BROWSE --> BS
+    SEARCH --> BS
+    COMMENT --> BS
+    SAVE --> BS
+    BS --> POSTGRES
+    BS --> REDIS
+    
+    %% Cache invalidation
+    RABBIT --> BS
+    BS --> REDIS
+    
+    %% Styling with better contrast
+    classDef user fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef auth fill:#fff8e1,stroke:#ef6c00,stroke-width:2px,color:#000
+    classDef content fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef consume fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef service fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+    classDef storage fill:#e0f2f1,stroke:#00695c,stroke-width:2px,color:#000
+    classDef infra fill:#fce4ec,stroke:#ad1457,stroke-width:2px,color:#000
+    
+    class USER user
+    class OAUTH,PASS auth
+    class CREATE,IMAGE,AI content
+    class BROWSE,SEARCH,COMMENT,SAVE consume
+    class US,AS,BS service
+    class MONGO,POSTGRES,REDIS storage
+    class RABBIT,CLOUD,GOOGLE infra
 ```
-Frontend Application
-        │
-        ├── Authentication Flow
-        │   │
-        │   ├── Google OAuth ──► User Service (5000) ──► MongoDB
-        │   └── Email/Password ──► User Service (5000) ──► MongoDB
-        │
-        ├── Content Creation Flow
-        │   │
-        │   ├── Create/Edit Blog ──► Author Service (5001) ──► PostgreSQL
-        │   │                              │
-        │   │                              ▼
-        │   │                         RabbitMQ (Cache Invalidation)
-        │   │                              │
-        │   │                              ▼
-        │   └── Image Upload ──► Cloudinary CDN
-        │
-        └── Content Consumption Flow
-            │
-            ├── Browse Blogs ──► Blog Service (5002) ──► Redis Cache
-            │                           │                    │
-            │                           └──► PostgreSQL ◄────┘
-            │
-            ├── Search/Filter ──► Blog Service (5002) ──► Redis Cache
-            │
-            ├── Comments ──► Blog Service (5002) ──► PostgreSQL
-            │
-            └── Save Blogs ──► Blog Service (5002) ──► PostgreSQL
-```
+
+</div>
 
 ## 🔄 Data Flow Patterns
 
-### 1. User Authentication Flow
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Frontend  │    │User Service │    │   Google    │    │   MongoDB   │
-│             │    │   (5000)    │    │   OAuth     │    │             │
-└──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
-       │                  │                  │                  │
-       │ 1. Login Request │                  │                  │
-       ├─────────────────►│                  │                  │
-       │                  │ 2. OAuth Request │                  │
-       │                  ├─────────────────►│                  │
-       │                  │ 3. User Data     │                  │
-       │                  │◄─────────────────┤                  │
-       │                  │ 4. Store/Fetch User               │
-       │                  ├─────────────────────────────────────►│
-       │                  │ 5. User Data     │                  │
-       │                  │◄─────────────────────────────────────┤
-       │ 6. JWT Token     │                  │                  │
-       │◄─────────────────┤                  │                  │
+<div align="center">
+
+### 🔐 User Authentication Flow
+```mermaid
+sequenceDiagram
+    participant U as 👤 User
+    participant F as 🌐 Frontend
+    participant US as 🔐 User Service
+    participant G as 🔍 Google OAuth
+    participant DB as 🍃 MongoDB
+    
+    Note over U,DB: Google OAuth Authentication Flow
+    
+    U->>+F: 1. Click "Login with Google"
+    F->>+US: 2. Initialize OAuth
+    US->>+G: 3. Redirect to Google
+    G->>-U: 4. Google Login Page
+    U->>+G: 5. Enter Credentials
+    G->>-US: 6. Authorization Code
+    US->>+G: 7. Exchange for Token
+    G->>-US: 8. Access Token + User Info
+    US->>+DB: 9. Store/Update User
+    DB->>-US: 10. User Document
+    US->>-F: 11. JWT Token + User Data
+    F->>-U: 12. Login Success
+    
+    Note over U,DB: Secure Session Established
+    
+    rect rgb(200, 255, 200)
+        Note right of F: JWT stored securely<br/>Auto-refresh enabled
+    end
 ```
 
-### 2. Blog Creation Flow
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Frontend  │    │Author Service│    │  Cloudinary │    │ PostgreSQL  │
-│             │    │   (5001)    │    │             │    │   (NeonDB)  │
-└──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
-       │                  │                  │                  │
-       │ 1. Create Blog   │                  │                  │
-       ├─────────────────►│                  │                  │
-       │                  │ 2. Upload Image  │                  │
-       │                  ├─────────────────►│                  │
-       │                  │ 3. Image URL     │                  │
-       │                  │◄─────────────────┤                  │
-       │                  │ 4. Store Blog Data                 │
-       │                  ├─────────────────────────────────────►│
-       │                  │ 5. Blog Created  │                  │
-       │                  │◄─────────────────────────────────────┤
-       │ 6. Success       │                  │                  │
-       │◄─────────────────┤                  │                  │
-       │                  │                  │                  │
-       │                  │ 7. Cache Invalidation ──► RabbitMQ ──► Blog Service
+</div>
+
+### ✍️ Blog Creation Flow
+```mermaid
+sequenceDiagram
+    participant A as 👨‍💼 Author
+    participant F as 🌐 Frontend
+    participant AS as ✍️ Author Service
+    participant AI as 🤖 Google AI
+    participant C as ☁️ Cloudinary
+    participant DB as 🐘 PostgreSQL
+    participant MQ as 🐰 RabbitMQ
+    participant BS as 📝 Blog Service
+    
+    Note over A,BS: Content Creation Workflow
+    
+    A->>+F: 1. Create New Blog
+    F->>+AS: 2. POST /blogs (JWT)
+    
+    par Image Upload
+        AS->>+C: 3a. Upload Images
+        C->>-AS: 3b. CDN URLs
+    and AI Content
+        AS->>+AI: 3c. Generate Content
+        AI->>-AS: 3d. AI Response
+    end
+    
+    AS->>+DB: 4. Store Blog Data
+    DB->>-AS: 5. Blog Document
+    
+    rect rgb(255, 240, 200)
+        Note over AS,BS: Cache Invalidation Process
+        AS->>+MQ: 6. Publish Cache Event
+        MQ->>+BS: 7. Cache Invalidation
+        BS->>-MQ: 8. ACK
+        MQ->>-AS: 9. Event Processed
+    end
+    
+    AS->>-F: 10. Blog Created Response
+    F->>-A: 11. Success Notification
+    
+    Note over A,BS: Blog Published & Cached
 ```
 
-### 3. Blog Consumption Flow
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Frontend  │    │Blog Service │    │    Redis    │    │ PostgreSQL  │
-│             │    │   (5002)    │    │    Cache    │    │   (NeonDB)  │
-└──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
-       │                  │                  │                  │
-       │ 1. Get Blogs     │                  │                  │
-       ├─────────────────►│                  │                  │
-       │                  │ 2. Check Cache   │                  │
-       │                  ├─────────────────►│                  │
-       │                  │ 3. Cache Miss    │                  │
-       │                  │◄─────────────────┤                  │
-       │                  │ 4. Query Database                   │
-       │                  ├─────────────────────────────────────►│
-       │                  │ 5. Blog Data     │                  │
-       │                  │◄─────────────────────────────────────┤
-       │                  │ 6. Cache Data    │                  │
-       │                  ├─────────────────►│                  │
-       │ 7. Blog List     │                  │                  │
-       │◄─────────────────┤                  │                  │
-```
-
-## � Application Flow & User Journeys
-
-### 1. Guest User Journey
-```
-Landing Page (/) 
-    │
-    ├── Browse Blogs
-    │   ├── View Blog List ──► Blog Service API
-    │   ├── Search Blogs ──► Blog Service API (cached)
-    │   ├── Filter by Category ──► Blog Service API (cached)
-    │   └── Read Blog ──► Blog Service API (with author info)
-    │
-    └── Authentication
-        ├── Sign Up ──► User Service API
-        └── Login ──► User Service API (OAuth/Password)
-```
-
-### 2. Authenticated User Journey
-```
-Authenticated User
-    │
-    ├── Profile Management
-    │   ├── View Profile (/profile) ──► User Service API
-    │   ├── Edit Profile ──► User Service API
-    │   └── Upload Profile Picture ──► User Service API ──► Cloudinary
-    │
-    ├── Blog Interaction
-    │   ├── Save/Unsave Blogs ──► Blog Service API
-    │   ├── View Saved Blogs (/blog/saved) ──► Blog Service API
-    │   └── Comment on Blogs ──► Blog Service API
-    │
-    └── Content Creation (Author Role)
-        ├── Create Blog ──► Author Service API
-        ├── Edit Blog ──► Author Service API
-        ├── Delete Blog ──► Author Service API
-        └── Upload Blog Images ──► Author Service API ──► Cloudinary
+### 📚 Blog Consumption Flow
+```mermaid
+sequenceDiagram
+    participant R as 👁️ Reader
+    participant F as 🌐 Frontend
+    participant BS as 📝 Blog Service
+    participant RC as ⚡ Redis Cache
+    participant DB as 🐘 PostgreSQL
+    participant US as 🔐 User Service
+    
+    Note over R,US: Content Discovery & Reading
+    
+    R->>+F: 1. Browse Blogs
+    F->>+BS: 2. GET /blogs
+    
+    alt Cache Hit
+        BS->>+RC: 3a. Check Cache
+        RC->>-BS: 3b. Cached Data ✅
+        rect rgb(200, 255, 200)
+            Note over BS,RC: Fast Response<br/>< 50ms
+        end
+    else Cache Miss
+        BS->>+RC: 3c. Check Cache
+        RC->>-BS: 3d. Cache Miss ❌
+        BS->>+DB: 4. Query Database
+        DB->>-BS: 5. Fresh Data
+        BS->>+RC: 6. Update Cache
+        RC->>-BS: 7. Cache Updated
+        rect rgb(255, 240, 200)
+            Note over BS,DB: Database Query<br/>~200-500ms
+        end
+    end
+    
+    BS->>-F: 8. Blog List Response
+    F->>-R: 9. Display Blogs
+    
+    opt User Interactions
+        R->>+F: 10. Save/Comment
+        F->>+US: 11. Verify Auth
+        US->>-F: 12. JWT Valid
+        F->>+BS: 13. Update Action
+        BS->>+DB: 14. Store Action
+        DB->>-BS: 15. Success
+        BS->>-F: 16. Action Complete
+        F->>-R: 17. UI Update
+    end
+    
+    Note over R,US: Optimized User Experience
 ```
 
-### 3. Real-time Data Synchronization
-```
-Author Creates/Updates Blog
-    │
-    ▼
-Author Service
-    │
-    ├── Save to PostgreSQL
-    │
-    └── Publish to RabbitMQ
-            │
-            ▼
-        Blog Service
-            │
-            ├── Receive Message
-            ├── Invalidate Redis Cache
-            └── Rebuild Cache
-                    │
-                    ▼
-                Frontend
-                    │
-                    └── Fresh Data on Next Request
+---
+
+## 📱 Application Flow & User Journeys
+
+<div align="center">
+
+### 🌟 Visitor Discovery Journey
+```mermaid
+journey
+    title 🎯 Guest User Experience Journey
+    section 🔍 Discovery Phase
+      Visit Homepage: 5: 👋 Visitor
+      Browse Blog Posts: 4: 📚 Reader
+      Read Blog Content: 5: 📖 Explorer
+      View Author Profiles: 3: 🧐 Curious
+    section 💡 Engagement Phase
+      Find Interesting Content: 4: 😍 Interested
+      Want to Save Blog: 2: 💔 Frustrated
+      Realize Need Account: 3: 🤔 Thoughtful
+    section 🚪 Registration Decision
+      Choose Auth Method: 4: 🎯 Focused
+      Google OAuth Login: 5: 🚀 Excited
+      Complete Profile Setup: 4: ✨ Engaged
+    section 🎉 First User Actions
+      Save Favorite Blogs: 5: 💖 Happy
+      Comment on Posts: 4: 💬 Social
+      Explore More Content: 5: 🌈 Delighted
 ```
 
-### 4. Component Architecture Flow
+```mermaid
+graph TD
+    START([🏠 Landing Page]) --> BROWSE{Browse Blogs?}
+    
+    BROWSE -->|Yes| BLOGLIST[📚 Blog List Page]
+    BROWSE -->|No| AUTH{Want to Login?}
+    
+    BLOGLIST --> SEARCH[🔍 Search/Filter]
+    BLOGLIST --> READ[📖 Read Blog]
+    BLOGLIST --> AUTHOR[👤 Author Profile]
+    
+    READ --> LIKE{Like Content?}
+    LIKE -->|Yes| NEEDAUTH[🔐 Need Account]
+    LIKE -->|No| BROWSE
+    
+    NEEDAUTH --> AUTH
+    AUTH -->|Yes| LOGIN[🔑 Login Page]
+    AUTH -->|No| BROWSE
+    
+    LOGIN --> OAUTH[🌐 Google OAuth]
+    LOGIN --> EMAIL[📧 Email/Password]
+    
+    OAUTH --> SUCCESS[✅ Login Success]
+    EMAIL --> SUCCESS
+    
+    SUCCESS --> USERFLOW[👤 User Dashboard]
+    
+    %% Styling with clear text visibility
+    classDef startEnd fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px,color:#000
+    classDef decision fill:#fff8e1,stroke:#ef6c00,stroke-width:2px,color:#000
+    classDef action fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#000
+    classDef auth fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    
+    class START,SUCCESS startEnd
+    class BROWSE,LIKE,NEEDAUTH,AUTH decision
+    class BLOGLIST,SEARCH,READ,AUTHOR,USERFLOW action
+    class LOGIN,OAUTH,EMAIL auth
 ```
-App Layout (/layout.tsx)
-    │
-    ├── Navbar Component
-    │   ├── Navigation Links
-    │   ├── Authentication Status
-    │   └── User Profile Dropdown
-    │
-    └── Page Components
-        │
-        ├── Home Page (/)
-        │   └── Blog Listings
-        │
-        ├── Login Page (/login)
-        │   ├── Google OAuth Button
-        │   └── Email/Password Form
-        │
-        ├── Blog Pages (/blog/[id])
-        │   ├── Blog Content
-        │   ├── Author Information
-        │   └── Comments Section
-        │
-        └── Saved Blogs (/blog/saved)
-            └── User's Bookmarked Blogs
+
+</div>
+
+<div align="center">
+
+### 🎨 Member Experience Overview
+
+</div>
+
+**Authenticated users unlock the full potential of The Reading Retreat platform:**
+
+#### 👤 **Profile Management**
+- **Dashboard Access**: Personal overview of saved blogs and activity
+- **Profile Customization**: Edit personal information and upload profile pictures
+- **Preference Settings**: Customize reading preferences and notifications
+
+#### 🎭 **Content Interaction**  
+- **Advanced Browsing**: Full access to all blog content with filtering options
+- **Personal Library**: Save favorite blogs to a personal collection
+- **Community Engagement**: Comment on posts and interact with other readers
+
+#### ✍️ **Content Creation** (Author Mode)
+- **Blog Publishing**: Create and publish original blog content
+- **Rich Media**: Upload images and enhance posts with visual elements
+- **AI Assistance**: Leverage Google AI for content generation and ideas
+
+#### 🌍 **Community Building**
+- **Social Features**: Follow favorite authors and build connections
+- **Content Sharing**: Share interesting blogs with others
+- **Audience Growth**: Build your own readership as an author
+
+```mermaid
+graph TD
+    USER([👤 Authenticated User]) --> PROFILE{Profile Actions}
+    USER --> CONTENT{Content Actions}
+    USER --> CREATE{Create Content?}
+    
+    PROFILE --> VIEWPROF[📋 View Profile]
+    PROFILE --> EDITPROF[✏️ Edit Profile]
+    PROFILE --> UPLOADPIC[🖼️ Upload Picture]
+    
+    CONTENT --> BROWSE[📚 Browse Blogs]
+    CONTENT --> SAVED[💾 View Saved]
+    CONTENT --> COMMENT[💬 Comment]
+    CONTENT --> SEARCH[🔍 Search]
+    
+    CREATE -->|Yes| AUTHOR[✍️ Become Author]
+    CREATE -->|No| CONTENT
+    
+    AUTHOR --> NEWBLOG[📝 Create Blog]
+    AUTHOR --> EDITBLOG[✏️ Edit Blog]
+    AUTHOR --> DELBLOG[🗑️ Delete Blog]
+    AUTHOR --> IMGUP[🖼️ Upload Images]
+    
+    NEWBLOG --> AI[🤖 AI Assistance]
+    IMGUP --> CDN[☁️ Cloudinary CDN]
+    
+    BROWSE --> SAVE[💾 Save Blog]
+    SAVE --> SAVED
+    
+    %% Service connections
+    VIEWPROF --> US[🔐 User Service]
+    EDITPROF --> US
+    UPLOADPIC --> US
+    UPLOADPIC --> CDN
+    
+    BROWSE --> BS[📝 Blog Service]
+    SAVED --> BS
+    COMMENT --> BS
+    SEARCH --> BS
+    SAVE --> BS
+    
+    NEWBLOG --> AS[✍️ Author Service]
+    EDITBLOG --> AS
+    DELBLOG --> AS
+    IMGUP --> AS
+    AI --> AS
+    
+    %% Styling with improved readability
+    classDef user fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px,color:#000
+    classDef profile fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#000
+    classDef content fill:#fff8e1,stroke:#ef6c00,stroke-width:2px,color:#000
+    classDef author fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef service fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000
+    classDef external fill:#b2dfdb,stroke:#00695c,stroke-width:2px,color:#000
+    
+    class USER user
+    class PROFILE,VIEWPROF,EDITPROF,UPLOADPIC profile
+    class CONTENT,BROWSE,SAVED,COMMENT,SEARCH,SAVE content
+    class CREATE,AUTHOR,NEWBLOG,EDITBLOG,DELBLOG,IMGUP,AI author
+    class US,BS,AS service
+    class CDN external
+```
+
+### ⚡ Real-time Data Synchronization
+```mermaid
+sequenceDiagram
+    participant A as ✍️ Author
+    participant AS as 📝 Author Service
+    participant DB as 🐘 PostgreSQL
+    participant MQ as 🐰 RabbitMQ
+    participant BS as 📚 Blog Service
+    participant RC as ⚡ Redis Cache
+    participant F as 🌐 Frontend
+    participant U as 👥 Users
+    
+    Note over A,U: Real-time Content Synchronization
+    
+    rect rgb(240, 248, 255)
+        Note over A,AS: Content Creation Phase
+        A->>+AS: 1. Create/Update Blog
+        AS->>+DB: 2. Save to Database
+        DB->>-AS: 3. Success Response
+    end
+    
+    rect rgb(255, 248, 240)
+        Note over AS,BS: Cache Invalidation Phase
+        AS->>+MQ: 4. Publish Cache Event
+        Note right of MQ: Event: {<br/>  type: 'BLOG_UPDATED',<br/>  blogId: '123',<br/>  action: 'invalidate'<br/>}
+        MQ->>+BS: 5. Deliver Message
+        BS->>+RC: 6. Invalidate Cache Keys
+        RC->>-BS: 7. Cache Cleared
+        BS->>-MQ: 8. ACK Message
+        MQ->>-AS: 9. Delivery Confirmed
+    end
+    
+    AS->>-A: 10. Blog Updated Successfully
+    
+    rect rgb(248, 255, 248)
+        Note over F,U: Fresh Data Delivery
+        U->>+F: 11. Request Blog Data
+        F->>+BS: 12. API Call
+        BS->>+RC: 13. Check Cache
+        RC->>-BS: 14. Cache Miss (Fresh)
+        BS->>+DB: 15. Query Database
+        DB->>-BS: 16. Latest Data
+        BS->>+RC: 17. Update Cache
+        RC->>-BS: 18. Cache Populated
+        BS->>-F: 19. Fresh Blog Data
+        F->>-U: 20. Display Updated Content
+    end
+    
+    Note over A,U: Zero-Downtime Data Consistency
+```
+
+### 🧩 Component Architecture Flow
+```mermaid
+graph TD
+    subgraph "🏗️ App Layout Structure"
+        ROOT[📱 App Layout<br/>layout.tsx]
+        ROOT --> NAV[🧭 Navbar Component]
+        ROOT --> MAIN[📄 Main Content Area]
+    end
+    
+    subgraph "🧭 Navigation System"
+        NAV --> BRAND[🏠 Brand Logo]
+        NAV --> MENU[📋 Menu Items]
+        NAV --> AUTH[🔐 Auth Status]
+        NAV --> MOBILE[📱 Mobile Menu]
+        
+        MENU --> HOME[🏠 Home Link]
+        MENU --> SAVED[💾 Saved Blogs]
+        MENU --> PROFILE[👤 Profile]
+        
+        AUTH --> LOGIN[🔑 Login Button]
+        AUTH --> LOGOUT[🚪 Logout Button]
+        AUTH --> AVATAR[👤 User Avatar]
+    end
+    
+    subgraph "📄 Page Components"
+        MAIN --> HOMEPAGE[🏠 Home Page<br/>/]
+        MAIN --> LOGINPAGE[🔑 Login Page<br/>/login]
+        MAIN --> REGPAGE[📝 Register Page<br/>/register]
+        MAIN --> BLOGPAGE[📖 Blog Detail<br/>/blog/:id]
+        MAIN --> EDITPAGE[✏️ Edit Blog<br/>/blog/edit/:id]
+        MAIN --> NEWPAGE[➕ New Blog<br/>/blog/new]
+        MAIN --> SAVEDPAGE[💾 Saved Blogs<br/>/blog/saved]
+        MAIN --> PROFPAGE[👤 Profile<br/>/profile]
+        MAIN --> USERPAGE[👥 User Profile<br/>/profile/:id]
+    end
+    
+    subgraph "🎨 UI Components"
+        HOMEPAGE --> BLOGCARD[📋 Blog Card]
+        HOMEPAGE --> LOADING[⏳ Loading Skeleton]
+        HOMEPAGE --> SIDEBAR[📋 Sidebar]
+        
+        BLOGPAGE --> CONTENT[📝 Blog Content]
+        BLOGPAGE --> AUTHOR[👨‍💼 Author Info]
+        BLOGPAGE --> COMMENTS[💬 Comments Section]
+        
+        LOGINPAGE --> OAUTH[🌐 OAuth Button]
+        LOGINPAGE --> FORM[📝 Login Form]
+    end
+    
+    subgraph "🔧 Shared Components"
+        SHARED[🔧 ui/ Components]
+        SHARED --> BUTTON[🔘 Button]
+        SHARED --> CARD[📄 Card]
+        SHARED --> INPUT[📝 Input]
+        SHARED --> DIALOG[💬 Dialog]
+        SHARED --> AVATAR_COMP[👤 Avatar]
+        SHARED --> TOOLTIP[💡 Tooltip]
+        SHARED --> SKELETON[⏳ Skeleton]
+        SHARED --> SELECT[📋 Select]
+        SHARED --> SEPARATOR[➖ Separator]
+        SHARED --> SHEET[📱 Sheet]
+    end
+    
+    %% Component usage connections
+    BLOGCARD -.-> BUTTON
+    BLOGCARD -.-> CARD
+    AUTHOR -.-> AVATAR_COMP
+    LOADING -.-> SKELETON
+    FORM -.-> INPUT
+    FORM -.-> BUTTON
+    OAUTH -.-> BUTTON
+    COMMENTS -.-> DIALOG
+    NAVBAR -.-> SHEET
+    
+    %% Styling with optimal contrast
+    classDef layout fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px,color:#000
+    classDef navigation fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#000
+    classDef pages fill:#fff8e1,stroke:#ef6c00,stroke-width:2px,color:#000
+    classDef components fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef shared fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000
+    
+    class ROOT,NAV,MAIN layout
+    class BRAND,MENU,AUTH,MOBILE,HOME,SAVED,PROFILE,LOGIN,LOGOUT,AVATAR navigation
+    class HOMEPAGE,LOGINPAGE,REGPAGE,BLOGPAGE,EDITPAGE,NEWPAGE,SAVEDPAGE,PROFPAGE,USERPAGE pages
+    class BLOGCARD,LOADING,SIDEBAR,CONTENT,AUTHOR,COMMENTS,OAUTH,FORM components
+    class SHARED,BUTTON,CARD,INPUT,DIALOG,AVATAR_COMP,TOOLTIP,SKELETON,SELECT,SEPARATOR,SHEET shared
 ```
 
 ## 🔧 Technical Implementation Details
 
-### API Integration Patterns
+### 🔌 **API Integration Patterns**
 ```typescript
 // Authentication Header Pattern
 const apiCall = async (endpoint: string, options: RequestInit = {}) => {
@@ -286,7 +684,7 @@ const SERVICES = {
 };
 ```
 
-### State Management Flow
+### 🔄 **State Management Flow**
 ```
 User Action (UI Event)
     │
@@ -309,83 +707,273 @@ Component Re-render
 UI Update
 ```
 
-### Caching Strategy
+### ⚡ Advanced Caching Strategy
+```mermaid
+graph TD
+    subgraph "🌐 Frontend Layer"
+        USER[👤 User Request]
+        BROWSER[🌐 Browser Cache]
+    end
+    
+    subgraph "📝 Blog Service Layer"
+        BS[📝 Blog Service]
+        LOGIC[🧠 Cache Logic]
+    end
+    
+    subgraph "⚡ Caching Layer"
+        REDIS[⚡ Redis Cache]
+        L1[🚀 L1: Hot Data<br/>TTL: 5min]
+        L2[🔥 L2: Warm Data<br/>TTL: 1hr]
+        L3[❄️ L3: Cold Data<br/>TTL: 24hr]
+    end
+    
+    subgraph "💾 Database Layer"
+        DB[🐘 PostgreSQL]
+        ANALYTICS[📊 Query Analytics]
+    end
+    
+    subgraph "🔄 Cache Management"
+        MQ[🐰 RabbitMQ]
+        INVALID[🗑️ Invalidation Logic]
+        PREBUILD[🏗️ Cache Rebuilding]
+    end
+    
+    %% User flow
+    USER --> BROWSER
+    BROWSER --> BS
+    BS --> LOGIC
+    
+    %% Cache hierarchy
+    LOGIC --> L1
+    L1 -->|Miss| L2
+    L2 -->|Miss| L3
+    L3 -->|Miss| DB
+    
+    %% Cache management
+    DB --> ANALYTICS
+    ANALYTICS --> PREBUILD
+    PREBUILD --> REDIS
+    
+    %% Invalidation flow
+    MQ --> INVALID
+    INVALID --> L1
+    INVALID --> L2
+    INVALID --> L3
+    
+    %% Performance metrics
+    L1 -.->|<10ms| USER
+    L2 -.->|<50ms| USER
+    L3 -.->|<100ms| USER
+    DB -.->|200-500ms| USER
+    
+    %% Styling with improved contrast
+    classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    classDef service fill:#fff8e1,stroke:#f57c00,stroke-width:2px,color:#000
+    classDef cache fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px,color:#000
+    classDef database fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+    classDef management fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
+    classDef performance fill:#ffebee,stroke:#d32f2f,stroke-width:1px,stroke-dasharray: 5 5,color:#000
+    
+    class USER,BROWSER frontend
+    class BS,LOGIC service
+    class REDIS,L1,L2,L3 cache
+    class DB,ANALYTICS database
+    class MQ,INVALID,PREBUILD management
 ```
-Frontend Request
-    │
-    ▼
-Blog Service
-    │
-    ├── Check Redis Cache
-    │   ├── Cache Hit ──► Return Cached Data
-    │   └── Cache Miss ──► Query PostgreSQL
-    │                         │
-    │                         ▼
-    │                    Store in Redis
-    │                         │
-    │                         ▼
-    │                    Return Fresh Data
-    │
-    └── Author Service Changes ──► RabbitMQ ──► Cache Invalidation
+
+---
+
+## 🛠️ Tech Stack
+
+<div align="center">
+
+### 🎯 Technology Overview
+
+</div>
+
+### 🚀 **Frontend Framework**
+- **Next.js 15.x** - React framework with Server-Side Rendering and App Router
+- **React 19.x** - Modern UI library with latest concurrent features
+- **TypeScript 5.x** - Enhanced type safety and developer experience
+- **App Router** - File-based routing with nested layouts and streaming
+
+### 🎨 **Styling & UI**
+- **[Tailwind CSS 4](https://tailwindcss.com/)** - Utility-first CSS framework for rapid styling
+- **[shadcn/ui](https://ui.shadcn.com/)** - Modern, accessible React component library
+- **[Radix UI](https://www.radix-ui.com/)** - Unstyled, accessible UI primitives
+- **[Lucide React](https://lucide.dev/)** - Beautiful, customizable SVG icon library
+- **CSS Variables** - Dynamic theming with custom properties
+
+### 🔐 **Authentication & Security**
+- **Google OAuth 2.0** - Secure social authentication integration
+- **JWT (JSON Web Tokens)** - Stateless, secure authorization mechanism
+- **HTTP-only Cookies** - XSS protection for sensitive data storage
+- **Multi-factor Authentication** - Email/password + social login options
+- **Token Auto-refresh** - Seamless session management
+
+### 🔧 **Development Tools**
+- **`clsx` + `tailwind-merge`** - Intelligent CSS class management
+- **`class-variance-authority`** - Type-safe component variant system
+- **ESLint** - Code quality and consistency enforcement
+- **PostCSS** - Advanced CSS processing and optimization
+- **Full TypeScript Support** - Enhanced IntelliSense and error catching
+
+### 🔗 **Backend Integration**
+- **RESTful APIs** - Clean, consistent API communication patterns
+- **[User Service](https://github.com/sajjad6ansari/BlogApp-UserService)** - Authentication and user management
+- **[Author Service](https://github.com/sajjad6ansari/BlogApp-AuthorService)** - Content creation and author operations  
+- **[Blog Service](https://github.com/sajjad6ansari/BlogApp-BlogService)** - Blog content storage and retrieval
+
+## 📁 Complete Project Structure
+
+This project is part of a comprehensive microservices architecture. Below is the complete structure including all services:
+
+### 🌐 **Frontend Application (This Repository)**
+```
+frontend/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── favicon.ico        # App favicon
+│   │   ├── globals.css        # Global styles and CSS variables
+│   │   ├── layout.tsx         # Root layout component
+│   │   ├── page.tsx          # Home page
+│   │   ├── blog/
+│   │   │   ├── [id]/
+│   │   │   │   └── page.tsx  # Blog detail page
+│   │   │   ├── edit/
+│   │   │   │   └── [id]/
+│   │   │   │       └── page.tsx  # Edit blog page
+│   │   │   ├── new/
+│   │   │   │   └── page.tsx  # Create new blog page
+│   │   │   └── saved/
+│   │   │       └── page.tsx  # Saved blogs page
+│   │   ├── blogs/
+│   │   │   ├── layout.tsx    # Blogs layout
+│   │   │   └── page.tsx      # All blogs page
+│   │   ├── login/
+│   │   │   └── page.tsx      # Login page
+│   │   ├── register/
+│   │   │   └── page.tsx      # Registration page
+│   │   └── profile/
+│   │       ├── page.tsx      # User profile page
+│   │       └── [id]/
+│   │           └── page.tsx  # Other user's profile
+│   ├── components/
+│   │   ├── BlogCard.tsx      # Blog card component
+│   │   ├── loading.tsx       # Loading component
+│   │   ├── navbar.tsx        # Navigation component
+│   │   ├── sidebar.tsx       # Sidebar component
+│   │   └── ui/               # Reusable UI components
+│   │       ├── avatar.tsx    # Avatar component
+│   │       ├── button.tsx    # Button component with variants
+│   │       ├── card.tsx      # Card component
+│   │       ├── dialog.tsx    # Dialog component
+│   │       ├── input.tsx     # Input component
+│   │       └── ...           # Other shadcn/ui components
+│   ├── context/
+│   │   └── AppContext.tsx    # Global application context
+│   ├── hooks/
+│   │   └── use-mobile.ts     # Mobile detection hook
+│   └── lib/
+│       └── utils.ts          # Utility functions
+├── public/                   # Static assets
+├── components.json           # shadcn/ui configuration
+├── next.config.ts           # Next.js configuration
+├── package.json             # Dependencies and scripts
+├── tailwind.config.js       # Tailwind CSS configuration
+└── tsconfig.json            # TypeScript configuration
 ```
 
-## �🛠️ Tech Stack
-
-### Frontend Framework
-- **Framework**: [Next.js 15](https://nextjs.org/) with App Router
-- **Runtime**: React 19
-- **Language**: TypeScript 5
-
-### Styling & UI
-- **CSS Framework**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **Component Library**: [shadcn/ui](https://ui.shadcn.com/) components
-- **UI Primitives**: [Radix UI](https://www.radix-ui.com/) primitives
-- **Icons**: [Lucide React](https://lucide.dev/)
-
-### Authentication & Authorization
-- **OAuth Provider**: Google OAuth 2.0
-- **Token Management**: JWT (JSON Web Tokens)
-- **Auth Methods**: Password-based + Social login
-
-### Utilities & Tools
-- **Styling**: `clsx` for conditional styling
-- **Class Management**: `tailwind-merge` for class merging
-- **Component Variants**: `class-variance-authority`
-
-### Backend Integration
-- **API Communication**: RESTful APIs
-- **User Service**: [BlogApp-UserService](https://github.com/sajjad6ansari/BlogApp-UserService)
-- **Author Service**: [BlogApp-AuthorService](https://github.com/sajjad6ansari/BlogApp-AuthorService)
-- **Blog Service**: [BlogApp-BlogService](https://github.com/sajjad6ansari/BlogApp-BlogService)
-
-## 📁 Project Structure
-
+### 🔐 **User Service** - [📖 Detailed Documentation](https://github.com/sajjad6ansari/BlogApp-UserService)
+*Authentication, user management, and profile operations*
 ```
-src/
-├── app/                    # Next.js App Router
-│   ├── favicon.ico        # App favicon
-│   ├── globals.css        # Global styles and CSS variables
-│   ├── layout.tsx         # Root layout component
-│   ├── page.tsx          # Home page
-│   └── login/
-│       └── page.tsx      # Login page
-├── components/
-│   ├── navbar.tsx        # Navigation component
-│   └── ui/               # Reusable UI components
-│       ├── button.tsx    # Button component with variants
-│       └── card.tsx      # Card component
-└── lib/
-    └── utils.ts          # Utility functions
+user-service/
+├── src/
+│   ├── controllers/
+│   │   └── user.ts          # User management logic
+│   │   └── auth/
+│   │       └── auth.ts      # Authentication controllers
+│   ├── middleware/
+│   │   ├── isAuth.ts        # JWT authentication middleware
+│   │   └── multer.ts        # File upload middleware
+│   ├── model/
+│   │   └── User.ts          # User data model (MongoDB)
+│   ├── routes/
+│   │   └── user.ts          # User API routes
+│   ├── utils/
+│   │   ├── dataUri.ts       # Data URI utilities
+│   │   ├── db.ts            # Database connection
+│   │   ├── GoogleConfig.ts  # Google OAuth configuration
+│   │   └── TryCatch.ts      # Error handling wrapper
+│   └── server.ts            # Express server setup
+├── Dockerfile               # Container configuration
+├── package.json             # Dependencies
+└── tsconfig.json            # TypeScript config
 ```
+
+### ✍️ **Author Service** - [📖 Detailed Documentation](https://github.com/sajjad6ansari/BlogApp-AuthorService)
+*Content creation, blog authoring, and media management*
+```
+author-service/
+├── src/
+│   ├── controllers/
+│   │   └── blog.ts          # Blog creation and management
+│   ├── middlewares/
+│   │   ├── isAuth.ts        # JWT verification
+│   │   └── multer.ts        # Image upload handling
+│   ├── routes/
+│   │   └── blog.ts          # Author-specific blog routes
+│   ├── utils/
+│   │   ├── dataUri.ts       # Image processing utilities
+│   │   ├── db.ts            # PostgreSQL connection
+│   │   ├── rabbitmq.ts      # Message queue integration
+│   │   └── TryCatch.ts      # Error handling
+│   └── server.ts            # Express server
+├── Dockerfile               # Docker configuration
+├── package.json             # Dependencies
+└── tsconfig.json            # TypeScript config
+```
+
+### 📝 **Blog Service** - [📖 Detailed Documentation](https://github.com/sajjad6ansari/BlogApp-BlogService)
+*Blog consumption, caching, comments, and content delivery*
+```
+blog-service/
+├── src/
+│   ├── controllers/
+│   │   └── blog.ts          # Blog retrieval and management
+│   ├── middleware/
+│   │   └── isAuth.ts        # Authentication middleware
+│   ├── routes/
+│   │   └── blog.ts          # Blog consumption routes
+│   ├── utils/
+│   │   ├── consumer.ts      # RabbitMQ message consumer
+│   │   ├── db.ts            # PostgreSQL connection
+│   │   └── TryCatch.ts      # Error handling utilities
+│   └── server.ts            # Express server setup
+├── Dockerfile               # Container configuration
+├── package.json             # Dependencies
+└── tsconfig.json            # TypeScript config
+```
+
+### 🗂️ **Microservices Communication**
+Each service operates independently with the following integration points:
+
+- **🔗 API Endpoints**: RESTful APIs on different ports (5000, 5001, 5002)
+- **🔐 Authentication**: Shared JWT token validation across services
+- **📡 Messaging**: RabbitMQ for inter-service communication and cache invalidation
+- **💾 Databases**: MongoDB (User Service) + PostgreSQL (Author/Blog Services)
+- **⚡ Caching**: Redis integration in Blog Service for performance optimization
+
+> **📚 For comprehensive implementation details, setup instructions, and API documentation, please refer to each service's dedicated repository linked above.**
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### 📋 **Prerequisites**
 
-- Node.js 18+ 
-- npm, yarn, pnpm, or bun
+- **Node.js 18+** - JavaScript runtime environment
+- **Package Manager** - npm, yarn, pnpm, or bun
 
-### Installation
+### 📦 **Installation**
 
 1. **Clone the repository**
    ```bash
@@ -433,7 +1021,7 @@ The project uses shadcn/ui components with the "new-york" style configuration:
 - **Card**: Flexible card components with header, content, and footer sections
 - **Navigation**: Responsive navbar with mobile menu support
 
-### Component Configuration
+### ⚙️ **Component Configuration**
 
 The UI components are configured via `components.json`:
 - **Style**: new-york
@@ -444,7 +1032,7 @@ The UI components are configured via `components.json`:
 
 ## 🎯 Key Features
 
-### Navigation
+### 🧭 **Navigation**
 - **Brand**: "The Reading Retreat"
 - **Menu Items**: 
   - Home
@@ -453,7 +1041,7 @@ The UI components are configured via `components.json`:
 - **Mobile Responsive**: Collapsible hamburger menu
 - **Icons**: Lucide icons for visual clarity
 
-### Theming
+### 🎨 **Theming**
 - **CSS Variables**: Custom properties for consistent theming
 - **Dark Mode Ready**: Theme configuration supports dark mode
 - **Custom Colors**: Comprehensive color palette with semantic naming
