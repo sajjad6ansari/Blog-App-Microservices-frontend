@@ -17,10 +17,8 @@ import { blogCategories, useAppData } from "@/context/AppContext";
 const SideBar = () => {
   const { searchQuery, setSearchQuery, setCategory } = useAppData();
   return (
-    <Sidebar>
-      <SidebarHeader className="bg-white text-2xl font-bold mt-5">
-        The Reading Retreat
-      </SidebarHeader>
+    <Sidebar style={{top: "80px"}} className="h-[calc(100vh-80px)] sticky">
+     
       <SidebarContent className="bg-white">
         <SidebarGroup>
           <SidebarGroupLabel>Search</SidebarGroupLabel>
