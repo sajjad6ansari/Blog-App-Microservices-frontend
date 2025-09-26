@@ -1,23 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { useAppData, user_service } from "@/context/AppContext";
-// --- Mocked App Context & Service URL ---
-// In a real Next.js app, this would be in a separate context file.
-// For this component to be self-contained and avoid import errors, we define it here.
-// const user_service = `${user_service}/api/v1/auth/register`; // Replace with your actual API URL
-
-// --- Self-Contained UI Components ---
-// To resolve import errors, simple versions of the UI components are included here.
-
-const Loading = () => (
-    <div className="flex items-center justify-center min-h-screen">
-        <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-indigo-600"></div>
-    </div>
-);
-
+import { redirect } from "next/navigation";
+import Loading from "@/components/loading";
 import {
     Card,
     CardContent,
@@ -26,28 +14,18 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-// --- Main Registration Page Component ---
 
 const RegisterPage = () => {
-    // Local state to replace the context for this self-contained example
-    const [isAuth, setIsAuth] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState(null);
+    const { isAuth, setIsAuth, loading, setLoading, setUser } = useAppData();
 
     // State for required form fields
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    // Effect to handle redirection after successful authentication
-    useEffect(() => {
-        if (isAuth) {
-            // Replaces the `redirect` function from next/navigation for client-side redirection
-            window.location.href = "/blogs";
-        }
-    }, [isAuth]);
+    if (isAuth) return redirect("/blogs");
 
-    const handleRegister = async (e:any) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
@@ -67,8 +45,8 @@ const RegisterPage = () => {
             Cookies.set("token", result.data.token, { expires: 5, secure: true, path: "/" });
             toast.success(result.data.message);
             setUser(result.data.user);
-            setIsAuth(true); // This will trigger the useEffect for redirection
-
+            setIsAuth(true);
+            setLoading(false);
         } catch (error) {
             console.log("Registration Error:", error);
             let errorMessage = "Registration failed. Please try again.";

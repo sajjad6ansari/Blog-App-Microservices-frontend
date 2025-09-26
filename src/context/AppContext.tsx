@@ -3,6 +3,7 @@
 import React, {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -11,14 +12,14 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { get } from "http";
 
-export const user_service = "https://user-service-fpdu.onrender.com";
+
+// export const user_service = "https://user-service-fpdu.onrender.com";
 
 // export const user_service = "https://blog-app-microservices-user-service-1.onrender.com";
 export const blog_service = "https://blog-service-859x.onrender.com";
 export const author_service = "https://author-service-xzq3.onrender.com";
-// export const user_service = "http://localhost:5000";
+export const user_service = "http://localhost:5000";
 // export const author_service = "http://localhost:5001";
 // export const blog_service = "http://localhost:5002";
 
@@ -91,12 +92,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   async function fetchUser() {
-    if(!isAuth) {
-      setLoading(false);
-      return;
-    }
     try {
       const token = Cookies.get("token");
+      
+      if (!token) {
+        setIsAuth(false);
+        setUser(null);
+        setLoading(false);
+        return;
+      }
 
       const { data } = await axios.get(`${user_service}/api/v1/me`, {
         headers: {
@@ -109,6 +113,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+      // If token is invalid, clear it
+      Cookies.remove("token");
+      setIsAuth(false);
+      setUser(null);
       setLoading(false);
     }
   }
@@ -119,7 +127,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [category, setCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  async function fetchBlogs() {
+  const fetchBlogs = useCallback(async () => {
     setBlogLoading(true);
     try {
       const { data } = await axios.get(
@@ -132,11 +140,11 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     } finally {
       setBlogLoading(false);
     }
-  }
+  }, [searchQuery, category]);
 
   const [savedBlogs, setSavedBlogs] = useState<SavedBlogType[] | null>(null);
 
-  async function getSavedBlogs() {
+  const getSavedBlogs = useCallback(async () => {
     const token = Cookies.get("token");
     if(!isAuth){
       return;
@@ -154,7 +162,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     } catch (error) {
       console.log(error);
     }
-  }
+  }, [isAuth]);
 
   async function logoutUser() {
     Cookies.remove("token");
@@ -166,12 +174,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   useEffect(() => {
     fetchUser();
+  }, []);
+
+  useEffect(() => {
     getSavedBlogs();
-  }, [isAuth]);
+  }, [getSavedBlogs]);
 
   useEffect(() => {
     fetchBlogs();
-  }, [searchQuery, category]);
+  }, [fetchBlogs]);
   return (
     <AppContext.Provider
       value={{

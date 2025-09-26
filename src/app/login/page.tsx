@@ -145,11 +145,12 @@ const LoginPage = () => {
       toast.success(result.data.message);
       setIsAuth(true);
       setUser(result.data.user);
+      setLoading(false);
     } catch (error) {
       console.log(error);
       toast.error("Invalid credentials");
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
