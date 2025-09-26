@@ -14,12 +14,12 @@ import toast, { Toaster } from "react-hot-toast";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 
-// export const user_service = "https://user-service-fpdu.onrender.com";
+export const user_service = "https://user-service-fpdu.onrender.com";
 
 // export const user_service = "https://blog-app-microservices-user-service-1.onrender.com";
 export const blog_service = "https://blog-service-859x.onrender.com";
 export const author_service = "https://author-service-xzq3.onrender.com";
-export const user_service = "http://localhost:5000";
+// export const user_service = "http://localhost:5000";
 // export const author_service = "http://localhost:5001";
 // export const blog_service = "http://localhost:5002";
 
