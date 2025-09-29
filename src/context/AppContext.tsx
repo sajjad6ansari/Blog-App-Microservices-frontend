@@ -176,6 +176,56 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     fetchUser();
   }, []);
 
+  // Warm-up (wake) Render-hosted microservices on initial load so the first real user action is fast.
+  // This sends lightweight HEAD/GET requests concurrently with a short timeout so it never blocks UX.
+  useEffect(() => {
+    let aborted = false;
+    const controller = new AbortController();
+
+    // Prefer a cheap public route for each service. If none, we still hit an existing GET.
+    // blog_service: using /api/v1/blog/all with minimal query (searchQuery empty & category empty already defaulted)
+    // user_service: using /api/v1/me will 401 without token; instead add a harmless cache-busting root ping.
+    // author_service: no explicit public GET; we'll ping ai/title with empty payload as POST (fast) OR attempt an OPTIONS.
+    // To avoid unnecessary load, we just issue a simple fetch to base URL root paths which should trigger a cold start.
+
+    const endpoints: { url: string; init?: RequestInit }[] = [
+      { url: `${blog_service}` },
+      { url: `${user_service}` },
+      { url: `${author_service}` },
+    ];
+
+    const timeout = setTimeout(() => {
+      // Abort lingering warm-up requests after 1500ms max.
+      controller.abort();
+    }, 1500);
+
+    (async () => {
+      try {
+        await Promise.allSettled(
+          endpoints.map(({ url, init }) =>
+            fetch(url, {
+              method: (init && init.method) || "GET",
+              cache: "no-store",
+              keepalive: true,
+              signal: controller.signal,
+              ...init,
+            })
+          )
+        );
+      } catch {
+        // Ignore – warm-up best effort.
+      } finally {
+        if (!aborted) clearTimeout(timeout);
+      }
+    })();
+
+    return () => {
+      aborted = true;
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, []);
+
   useEffect(() => {
     getSavedBlogs();
   }, [getSavedBlogs]);
