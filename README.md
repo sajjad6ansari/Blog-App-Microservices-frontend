@@ -60,9 +60,6 @@ graph TB
         FE[🎨 Next.js 15 Frontend<br/>React 19 + TypeScript<br/>Tailwind CSS + shadcn/ui]
     end
     
-    subgraph "🔗 API Gateway Layer"
-        HTTP[🔒 HTTPS/JWT Auth<br/>RESTful APIs<br/>JSON Payloads]
-    end
     
     subgraph "⚡ Microservices Layer"
         US[🔐 User Service<br/>Port: 5000<br/>Auth & Profiles]
@@ -84,14 +81,12 @@ graph TB
     subgraph "☁️ External Services"
         GOOGLE[🔍 Google OAuth<br/>Authentication]
         CLOUD[☁️ Cloudinary<br/>Image CDN]
-        DOCKER[🐳 Docker Hub<br/>Container Registry]
     end
     
     %% Frontend connections
-    FE --> HTTP
-    HTTP --> US
-    HTTP --> AS  
-    HTTP --> BS
+    FE --> US
+    FE --> AS  
+    FE --> BS
     
     %% Service to database connections
     US --> MONGO
@@ -107,7 +102,7 @@ graph TB
     %% External service connections
     US --> GOOGLE
     AS --> CLOUD
-    FE -.-> DOCKER
+    %% Docker Hub registry reference removed from diagram
     
     %% Styling with high contrast text
     classDef frontend fill:#b3e5fc,stroke:#0277bd,stroke-width:3px,color:#000
@@ -121,8 +116,8 @@ graph TB
     class US,AS,BS microservice
     class MONGO,POSTGRES1,POSTGRES2 database
     class REDIS,RABBIT cache
-    class GOOGLE,CLOUD,DOCKER external
-    class HTTP api
+    class GOOGLE,CLOUD external
+    
 ```
 
 </div>
