@@ -53,71 +53,12 @@ A modern, responsive blog application frontend built with Next.js 15, React 19, 
 <div align="center">
 
 ### 🌟 High-Level System Architecture
-
-```mermaid
-graph TB
-    subgraph "🌐 Frontend Layer"
-        FE[🎨 Next.js 15 Frontend<br/>React 19 + TypeScript<br/>Tailwind CSS + shadcn/ui]
-    end
-    
-    
-    subgraph "⚡ Microservices Layer"
-        US[🔐 User Service<br/>Auth & Profiles]
-        AS[✍️ Author Service<br/>Content Creation]
-        BS[📝 Blog Service<br/>Content Management]
-    end
-    
-    subgraph "💾 Database Layer"
-        MONGO[(🍃 MongoDB<br/>Users & Profiles<br/>Authentication Data)]
-        POSTGRES1[(🐘 PostgreSQL<br/>NeonDB<br/>Blog Content)]
-        POSTGRES2[(🐘 PostgreSQL<br/>NeonDB<br/>Comments & Saves)]
-    end
-    
-    subgraph "🚀 Caching & Messaging"
-        REDIS[(⚡ Redis Cache<br/>Blog Data<br/>Performance)]
-        RABBIT[🐰 RabbitMQ<br/>Message Queue<br/>Cache Invalidation]
-    end
-    
-    subgraph "☁️ External Services"
-        GOOGLE[🔍 Google OAuth<br/>Authentication]
-        CLOUD[☁️ Cloudinary<br/>Image CDN]
-    end
-    
-    %% Frontend connections
-    FE --> US
-    FE --> AS  
-    FE --> BS
-    
-    %% Service to database connections
-    US --> MONGO
-    AS --> POSTGRES1
-    BS --> POSTGRES2
-    BS --> REDIS
-    
-    %% Inter-service communication
-    AS --> RABBIT
-    RABBIT --> BS
-    BS --> REDIS
-    
-    %% External service connections
-    US --> GOOGLE
-    AS --> CLOUD
-    %% Docker Hub registry reference removed from diagram
-    
-    %% Styling with high contrast text
-    classDef frontend fill:#b3e5fc,stroke:#0277bd,stroke-width:3px,color:#000
-    classDef microservice fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#000
-    classDef database fill:#b2dfdb,stroke:#00695c,stroke-width:2px,color:#000
-    classDef cache fill:#fff9c4,stroke:#f57f17,stroke-width:2px,color:#000
-    classDef external fill:#d1c4e9,stroke:#4527a0,stroke-width:2px,color:#000
-    classDef api fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
-    
-    class FE frontend
-    class US,AS,BS microservice
-    class MONGO,POSTGRES1,POSTGRES2 database
-    class REDIS,RABBIT cache
-    class GOOGLE,CLOUD external
-    
+```
+Frontend (Next.js 15)  ←→  User Service (Auth)  ←→  MongoDB
+         ↓                      ↓
+    Blog Service (Reading)  ←→  Author Service (Writing)  ←→  PostgreSQL
+         ↓                      ↓
+    Redis Cache  ←→  RabbitMQ (Events)
 ```
 
 </div>
