@@ -65,9 +65,9 @@ graph TB
     end
     
     subgraph "⚡ Microservices Layer"
-        US[🔐 User Service<br/>Port: 5000<br/>Auth & Profiles]
-        AS[✍️ Author Service<br/>Port: 5001<br/>Content Creation]
-        BS[📝 Blog Service<br/>Port: 5002<br/>Content Management]
+        US[🔐 User Service<br/>Auth & Profiles]
+        AS[✍️ Author Service<br/>Content Creation]
+        BS[📝 Blog Service<br/>Content Management]
     end
     
     subgraph "💾 Database Layer"
