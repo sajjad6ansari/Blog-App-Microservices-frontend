@@ -142,70 +142,7 @@ const SERVICES = {
 };
 ```
 
-### 🔄 **State Management Flow**
-```
-User Action (UI Event)
-    │
-    ▼
-React Component State Update
-    │
-    ▼
-API Call to Microservice
-    │
-    ▼
-Backend Processing
-    │
-    ▼
-Response with Updated Data
-    │
-    ▼
-Component Re-render
-    │
-    ▼
-UI Update
-```
 
-### 🔔 Event-driven update flow
-```mermaid
-graph TD
-  subgraph "🌐 Frontend Layer"
-    USER[👤 User Request]
-  end
-
-  subgraph "📝 Blog Service Layer"
-    BS[📝 Blog Service]
-  end
-
-  subgraph "💾 Database Layer"
-    DB[🐘 PostgreSQL]
-  end
-
-  subgraph "🔔 Events"
-    MQ[🐰 RabbitMQ]
-    INVALID[🗑️ Invalidation Handler]
-  end
-
-  %% Request flow
-  USER --> BS
-  BS --> DB
-
-  %% Event-driven updates (simplified)
-  MQ --> INVALID
-  INVALID --> BS
-
-  %% Styling
-  classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
-  classDef service fill:#fff8e1,stroke:#f57c00,stroke-width:2px,color:#000
-  classDef database fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
-  classDef events fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000
-
-  class USER frontend
-  class BS service
-  class DB database
-  class MQ,INVALID events
-```
-
----
 
 ## 🛠️ Tech Stack
 
