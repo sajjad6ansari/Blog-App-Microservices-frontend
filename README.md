@@ -53,12 +53,65 @@ A modern, responsive blog application frontend built with Next.js 15, React 19, 
 <div align="center">
 
 ### 🌟 High-Level System Architecture
-```
-Frontend (Next.js 15)  ←→  User Service (Auth)  ←→  MongoDB
-         ↓                      ↓
-    Blog Service (Reading)  ←→  Author Service (Writing)  ←→  PostgreSQL
-         ↓                      ↓
-    Redis Cache  ←→  RabbitMQ (Events)
+```mermaid
+graph TB
+  %% Layers
+  subgraph FE[🌐 Frontend]
+    APP[🎨 Next.js 15 Frontend\nReact 19 + TypeScript]
+  end
+
+  subgraph SVCS[⚡ Services]
+    US[🔐 User Service\nAuth & Profiles]
+    AS[✍️ Author Service\nWriting & Media]
+    BS[📝 Blog Service\nReading]
+  end
+
+  subgraph DATA[💾 Data Stores]
+    MONGO[(🍃 MongoDB\nUsers)]
+    PG[(🐘 PostgreSQL\nBlogs & Comments)]
+  end
+
+  subgraph INFRA[🚀 Infra]
+    REDIS[(⚡ Redis Cache)]
+    RABBIT[(🐰 RabbitMQ\nEvents)]
+  end
+
+  subgraph EXT[☁ External Services]
+    GOOGLE[🔍 Google OAuth]
+    CLOUD[☁ Cloudinary]
+  end
+
+  %% Frontend → Services
+  APP --> US
+  APP --> BS
+  APP --> AS
+
+  %% Services → Data
+  US --> MONGO
+  AS --> PG
+  BS --> PG
+  BS --> REDIS
+
+  %% Events & Caching
+  AS --> RABBIT
+  RABBIT --> BS
+  BS --> REDIS
+
+  %% External integrations
+  US --> GOOGLE
+  AS --> CLOUD
+
+  %% Styling (readable contrast)
+  classDef fe fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+  classDef svc fill:#fff8e1,stroke:#f57c00,stroke-width:2px,color:#000
+  classDef data fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+  classDef infra fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000
+
+  class APP fe
+  class US,AS,BS svc
+  class MONGO,PG data
+  class REDIS,RABBIT infra
+  class GOOGLE,CLOUD infra
 ```
 
 </div>
@@ -112,78 +165,44 @@ Component Re-render
 UI Update
 ```
 
-### ⚡ Advanced Caching Strategy
+### 🔔 Event-driven update flow
 ```mermaid
 graph TD
-    subgraph "🌐 Frontend Layer"
-        USER[👤 User Request]
-        BROWSER[🌐 Browser Cache]
-    end
-    
-    subgraph "📝 Blog Service Layer"
-        BS[📝 Blog Service]
-        LOGIC[🧠 Cache Logic]
-    end
-    
-    subgraph "⚡ Caching Layer"
-        REDIS[⚡ Redis Cache]
-        L1[🚀 L1: Hot Data<br/>TTL: 5min]
-        L2[🔥 L2: Warm Data<br/>TTL: 1hr]
-        L3[❄️ L3: Cold Data<br/>TTL: 24hr]
-    end
-    
-    subgraph "💾 Database Layer"
-        DB[🐘 PostgreSQL]
-        ANALYTICS[📊 Query Analytics]
-    end
-    
-    subgraph "🔄 Cache Management"
-        MQ[🐰 RabbitMQ]
-        INVALID[🗑️ Invalidation Logic]
-        PREBUILD[🏗️ Cache Rebuilding]
-    end
-    
-    %% User flow
-    USER --> BROWSER
-    BROWSER --> BS
-    BS --> LOGIC
-    
-    %% Cache hierarchy
-    LOGIC --> L1
-    L1 -->|Miss| L2
-    L2 -->|Miss| L3
-    L3 -->|Miss| DB
-    
-    %% Cache management
-    DB --> ANALYTICS
-    ANALYTICS --> PREBUILD
-    PREBUILD --> REDIS
-    
-    %% Invalidation flow
-    MQ --> INVALID
-    INVALID --> L1
-    INVALID --> L2
-    INVALID --> L3
-    
-    %% Performance metrics
-    L1 -.->|<10ms| USER
-    L2 -.->|<50ms| USER
-    L3 -.->|<100ms| USER
-    DB -.->|200-500ms| USER
-    
-    %% Styling with improved contrast
-    classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
-    classDef service fill:#fff8e1,stroke:#f57c00,stroke-width:2px,color:#000
-    classDef cache fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px,color:#000
-    classDef database fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
-    classDef management fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
-    classDef performance fill:#ffebee,stroke:#d32f2f,stroke-width:1px,stroke-dasharray: 5 5,color:#000
-    
-    class USER,BROWSER frontend
-    class BS,LOGIC service
-    class REDIS,L1,L2,L3 cache
-    class DB,ANALYTICS database
-    class MQ,INVALID,PREBUILD management
+  subgraph "🌐 Frontend Layer"
+    USER[👤 User Request]
+  end
+
+  subgraph "📝 Blog Service Layer"
+    BS[📝 Blog Service]
+  end
+
+  subgraph "💾 Database Layer"
+    DB[🐘 PostgreSQL]
+  end
+
+  subgraph "🔔 Events"
+    MQ[🐰 RabbitMQ]
+    INVALID[🗑️ Invalidation Handler]
+  end
+
+  %% Request flow
+  USER --> BS
+  BS --> DB
+
+  %% Event-driven updates (simplified)
+  MQ --> INVALID
+  INVALID --> BS
+
+  %% Styling
+  classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+  classDef service fill:#fff8e1,stroke:#f57c00,stroke-width:2px,color:#000
+  classDef database fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#000
+  classDef events fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000
+
+  class USER frontend
+  class BS service
+  class DB database
+  class MQ,INVALID events
 ```
 
 ---
