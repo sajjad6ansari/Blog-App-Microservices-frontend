@@ -61,19 +61,19 @@ graph TB
   end
 
   subgraph SVCS[⚡ Services]
-    US[🔐 User Service\nAuth & Profiles]
-    AS[✍️ Author Service\nWriting & Media]
-    BS[📝 Blog Service\nReading]
+    US[🔐 User Service - Auth & Profiles]
+    AS[✍️ Author Service - Writing & Media]
+    BS[📝 Blog Service - Reading]
   end
 
   subgraph DATA[💾 Data Stores]
-    MONGO[(🍃 MongoDB\nUsers)]
-    PG[(🐘 PostgreSQL\nBlogs & Comments)]
+    MONGO[(🍃 MongoDB - Users)]
+    PG[(🐘 PostgreSQL - Blogs & Comments)]
   end
 
   subgraph INFRA[🚀 Infra]
     REDIS[(⚡ Redis Cache)]
-    RABBIT[(🐰 RabbitMQ\nEvents)]
+    RABBIT[(🐰 RabbitMQ - Events)]
   end
 
   subgraph EXT[☁ External Services]
